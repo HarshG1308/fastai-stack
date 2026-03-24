@@ -1,0 +1,72 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+{% if config.use_postgres %}
+      - db
+{% elif config.use_mongodb %}
+      - mongo
+{% endif %}
+{% if config.use_celery %}
+      - redis
+{% endif %}
+{% if config.use_weaviate %}
+      - weaviate
+{% endif %}
+{% if config.use_gpu %}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+{% endif %}
+
+{% if config.use_postgres %}
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+{% endif %}
+
+{% if config.use_mongodb %}
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongodata:/data/db
+{% endif %}
+
+{% if config.use_celery %}
+  redis:
+    image: redis:7-alpine
+
+  celery:
+    build: .
+    command: celery -A app.tasks worker -l info
+    env_file: .env
+    depends_on:
+      - redis
+{% endif %}
+
+{% if config.use_weaviate %}
+  weaviate:
+    image: semitechnologies/weaviate:1.25.0
+    ports:
+      - "8080:8080"
+{% endif %}
+
+volumes:
+{% if config.use_postgres %}
+  pgdata:
+{% endif %}
+{% if config.use_mongodb %}
+  mongodata:
+{% endif %}

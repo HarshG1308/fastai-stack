@@ -1,0 +1,28 @@
+from pathlib import Path
+
+from fastforge.generator import render_project
+from fastforge.models import (AIChoice, AuthChoice, DatabaseChoice,
+                              DockerChoice, FrontendChoice, MonitoringChoice,
+                              ProjectConfig, TaskChoice, VectorDBChoice)
+
+
+def test_render_project_with_ai(tmp_path: Path) -> None:
+    config = ProjectConfig(
+        project_name="My AI App",
+        project_slug="my-ai-app",
+        db=DatabaseChoice.postgres,
+        auth=AuthChoice.jwt,
+        tasks=TaskChoice.celery_redis,
+        ai=AIChoice.openai,
+        vector_db=VectorDBChoice.pgvector,
+        docker=DockerChoice.gpu,
+        monitoring=MonitoringChoice.prometheus,
+        frontend=FrontendChoice.none,
+    )
+
+    project_dir = render_project(config=config, destination=tmp_path)
+
+    assert project_dir.exists()
+    assert (project_dir / "app" / "api" / "v1" / "endpoints" / "ai" / "chat.py").exists()
+    assert (project_dir / "app" / "tasks.py").exists()
+    assert (project_dir / "migrations" / ".gitkeep").exists()

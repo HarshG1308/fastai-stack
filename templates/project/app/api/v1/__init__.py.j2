@@ -1,0 +1,13 @@
+from fastapi import APIRouter
+
+from app.api.v1.endpoints import health
+{% if config.use_ai %}
+from app.api.v1.endpoints.ai import chat, embeddings
+{% endif %}
+
+api_router = APIRouter()
+api_router.include_router(health.router, tags=["health"])
+{% if config.use_ai %}
+api_router.include_router(chat.router, prefix="/ai", tags=["ai"])
+api_router.include_router(embeddings.router, prefix="/ai", tags=["ai"])
+{% endif %}

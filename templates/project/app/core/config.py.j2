@@ -1,0 +1,32 @@
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
+
+    project_name: str = "{{ project_name }}"
+    api_v1_str: str = "/api/v1"
+    secret_key: str = Field(..., alias="SECRET_KEY")
+{% if config.use_postgres or config.use_sqlite %}
+    database_url: str = Field(..., alias="DATABASE_URL")
+{% endif %}
+{% if config.use_mongodb %}
+    mongodb_url: str = Field(..., alias="MONGODB_URL")
+    mongodb_db: str = Field(default="app", alias="MONGODB_DB")
+{% endif %}
+{% if config.ai.value == 'openai' %}
+    openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
+{% endif %}
+{% if config.ai.value == 'huggingface' %}
+    hf_model: str = Field(default="sentence-transformers/all-MiniLM-L6-v2", alias="HF_MODEL")
+{% endif %}
+{% if config.use_sentry %}
+    sentry_dsn: str | None = Field(default=None, alias="SENTRY_DSN")
+{% endif %}
+{% if config.use_weaviate %}
+    weaviate_url: str = Field(default="http://weaviate:8080", alias="WEAVIATE_URL")
+{% endif %}
+
+
+settings = Settings()

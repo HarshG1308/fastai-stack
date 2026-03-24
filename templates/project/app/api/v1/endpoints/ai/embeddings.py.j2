@@ -1,0 +1,18 @@
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+router = APIRouter()
+
+
+class EmbeddingRequest(BaseModel):
+    text: str
+
+
+@router.post("/embeddings")
+async def embeddings(request: EmbeddingRequest):
+{% if config.ai.value == 'huggingface' %}
+    # Stub endpoint for sentence-transformers model integration.
+    return {"model": "sentence-transformers/all-MiniLM-L6-v2", "embedding": [0.0, 0.1, 0.2], "text": request.text}
+{% else %}
+    return {"provider": "{{ config.ai.value }}", "embedding": [0.0, 0.1, 0.2], "text": request.text}
+{% endif %}

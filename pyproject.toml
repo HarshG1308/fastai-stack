@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "fastai-stack"
+version = "0.1.0"
+description = "Interactive CLI generator for production-ready FastAPI AI stacks"
+authors = ["Harsh Gautam <hgqeir@gmai.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "fastforge" }]
+homepage = "https://github.com/HarshG1308/fastai-stack"
+repository = "https://github.com/HarshG1308/fastai-stack"
+keywords = ["fastapi", "cli", "scaffold", "ai", "ml", "generator"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Code Generators"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+typer = ">=0.12.0"
+rich = ">=13.7.0"
+jinja2 = ">=3.1.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.2.0"
+ruff = ">=0.5.0"
+mypy = ">=1.10.0"
+
+[tool.poetry.scripts]
+fastai-stack = "fastforge.cli:app"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
