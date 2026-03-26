@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import TypeVar
 
 import typer
 from rich.console import Console
 from rich.panel import Panel
 
+from . import __version__
 from .generator import render_project
 from .models import (AIChoice, AuthChoice, DatabaseChoice, DockerChoice,
                      FrontendChoice, MonitoringChoice, ProjectConfig,
@@ -14,6 +16,7 @@ from .models import (AIChoice, AuthChoice, DatabaseChoice, DockerChoice,
 
 app = typer.Typer(help="fastai-stack: Generate production-ready FastAPI stacks for AI developers.")
 console = Console()
+EnumType = TypeVar("EnumType")
 
 
 def _slugify(value: str) -> str:
@@ -21,9 +24,20 @@ def _slugify(value: str) -> str:
     return slug or "fastai-stack-app"
 
 
-def _prompt_enum(label: str, enum_type: type, default: str) -> str:
+def _prompt_enum(label: str, enum_type: type[EnumType], default: EnumType) -> EnumType:
     choices = ", ".join(item.value for item in enum_type)
-    return typer.prompt(f"{label} [{choices}]", default=default)
+    while True:
+        raw_value = typer.prompt(f"{label} [{choices}]", default=default.value)
+        normalized = raw_value.strip().lower()
+        for item in enum_type:
+            if normalized == item.value:
+                return item
+        console.print(f"[bold yellow]Invalid value:[/bold yellow] '{raw_value}'. Choose one of: {choices}")
+
+
+def _validate_config(config: ProjectConfig) -> None:
+    if config.vector_db == VectorDBChoice.pgvector and config.db != DatabaseChoice.postgres:
+        raise typer.BadParameter("--vector-db pgvector requires --db postgres")
 
 
 @app.command()
@@ -49,14 +63,14 @@ def create(
         final_project_name = typer.prompt("Project name", default=project_name)
         final_project_slug = typer.prompt("Project slug", default=_slugify(final_project_name))
 
-        db = DatabaseChoice(_prompt_enum("DB", DatabaseChoice, db.value))
-        auth = AuthChoice(_prompt_enum("Auth", AuthChoice, auth.value))
-        tasks = TaskChoice(_prompt_enum("Tasks", TaskChoice, tasks.value))
-        ai = AIChoice(_prompt_enum("AI", AIChoice, ai.value))
-        vector_db = VectorDBChoice(_prompt_enum("Vector DB", VectorDBChoice, vector_db.value))
-        docker = DockerChoice(_prompt_enum("Docker", DockerChoice, docker.value))
-        monitoring = MonitoringChoice(_prompt_enum("Monitoring", MonitoringChoice, monitoring.value))
-        frontend = FrontendChoice(_prompt_enum("Frontend", FrontendChoice, frontend.value))
+        db = _prompt_enum("DB", DatabaseChoice, db)
+        auth = _prompt_enum("Auth", AuthChoice, auth)
+        tasks = _prompt_enum("Tasks", TaskChoice, tasks)
+        ai = _prompt_enum("AI", AIChoice, ai)
+        vector_db = _prompt_enum("Vector DB", VectorDBChoice, vector_db)
+        docker = _prompt_enum("Docker", DockerChoice, docker)
+        monitoring = _prompt_enum("Monitoring", MonitoringChoice, monitoring)
+        frontend = _prompt_enum("Frontend", FrontendChoice, frontend)
 
     config = ProjectConfig(
         project_name=final_project_name,
@@ -71,10 +85,15 @@ def create(
         frontend=frontend,
     )
 
+    _validate_config(config)
+
     try:
         project_dir = render_project(config=config, destination=output_dir.resolve())
     except FileExistsError as exc:
         console.print(f"[bold red]Error:[/bold red] {exc}")
+        raise typer.Exit(code=1)
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        console.print(f"[bold red]Generation failed:[/bold red] {exc}")
         raise typer.Exit(code=1)
 
     console.print("\n[bold green]Project created successfully![/bold green]")
@@ -88,7 +107,7 @@ def create(
 @app.command()
 def version() -> None:
     """Show CLI version."""
-    console.print("fastai-stack 0.1.0")
+    console.print(f"fastai-stack {__version__}")
 
 
 if __name__ == "__main__":

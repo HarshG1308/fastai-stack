@@ -3,11 +3,26 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from jinja2 import (Environment, FileSystemLoader, StrictUndefined,
+                    TemplateNotFound)
 
 from .models import ProjectConfig
 
-TEMPLATE_ROOT = Path(__file__).resolve().parent.parent / "templates" / "project"
+
+def _resolve_template_root() -> Path:
+    package_dir = Path(__file__).resolve().parent
+    candidates = [
+        package_dir / "templates" / "project",
+        package_dir.parent / "templates" / "project",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    searched = ", ".join(str(item) for item in candidates)
+    raise FileNotFoundError(f"Could not find templates/project. Searched: {searched}")
+
+
+TEMPLATE_ROOT = _resolve_template_root()
 
 
 def _base_dependencies(config: ProjectConfig) -> list[str]:
@@ -144,10 +159,15 @@ def render_project(config: ProjectConfig, destination: Path) -> Path:
     }
 
     for source_name, target_name in _template_map(config):
-        template = env.get_template(source_name)
+        try:
+            template = env.get_template(source_name)
+        except TemplateNotFound as exc:
+            raise FileNotFoundError(f"Missing template in distribution: {source_name}") from exc
         rendered = template.render(**context)
         target = project_dir / target_name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(rendered.rstrip() + "\n", encoding="utf-8")
+
+    return project_dir
 
     return project_dir
