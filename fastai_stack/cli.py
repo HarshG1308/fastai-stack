@@ -18,7 +18,7 @@ console = Console()
 
 def _slugify(value: str) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower()).strip("-")
-    return slug or "fastforge-app"
+    return slug or "fastai-stack-app"
 
 
 def _prompt_enum(label: str, enum_type: type, default: str) -> str:

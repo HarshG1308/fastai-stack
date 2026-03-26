@@ -1,9 +1,10 @@
 from pathlib import Path
 
-from fastforge.generator import render_project
-from fastforge.models import (AIChoice, AuthChoice, DatabaseChoice,
-                              DockerChoice, FrontendChoice, MonitoringChoice,
-                              ProjectConfig, TaskChoice, VectorDBChoice)
+from fastai_stack.generator import render_project
+from fastai_stack.models import (AIChoice, AuthChoice, DatabaseChoice,
+                                 DockerChoice, FrontendChoice,
+                                 MonitoringChoice, ProjectConfig, TaskChoice,
+                                 VectorDBChoice)
 
 
 def test_render_project_with_ai(tmp_path: Path) -> None:
@@ -25,4 +26,5 @@ def test_render_project_with_ai(tmp_path: Path) -> None:
     assert project_dir.exists()
     assert (project_dir / "app" / "api" / "v1" / "endpoints" / "ai" / "chat.py").exists()
     assert (project_dir / "app" / "tasks.py").exists()
+    assert (project_dir / "migrations" / ".gitkeep").exists()
     assert (project_dir / "migrations" / ".gitkeep").exists()

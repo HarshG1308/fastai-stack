@@ -2,7 +2,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from fastforge.cli import app
+from fastai_stack.cli import app
 
 runner = CliRunner()
 

@@ -1,4 +1,4 @@
-name: FastForge CI
+name: fastai-stack CI
 
 on:
   push:
@@ -20,6 +20,6 @@ jobs:
       - name: Lint
         run: poetry run ruff check .
       - name: Type checks
-        run: poetry run mypy fastforge || true
+        run: poetry run mypy fastai_stack || true
       - name: Test
         run: poetry run pytest

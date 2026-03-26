@@ -5,7 +5,7 @@ description = "Interactive CLI generator for production-ready FastAPI AI stacks"
 authors = ["Harsh Gautam <hgqeir@gmai.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "fastforge" }]
+packages = [{ include = "fastai_stack" }]
 homepage = "https://github.com/HarshG1308/fastai-stack"
 repository = "https://github.com/HarshG1308/fastai-stack"
 keywords = ["fastapi", "cli", "scaffold", "ai", "ml", "generator"]
@@ -33,7 +33,7 @@ ruff = ">=0.5.0"
 mypy = ">=1.10.0"
 
 [tool.poetry.scripts]
-fastai-stack = "fastforge.cli:app"
+fastai-stack = "fastai_stack.cli:app"
 
 [tool.ruff]
 line-length = 100
