@@ -1,11 +1,14 @@
 [tool.poetry]
 name = "fastai-stack"
-version = "0.1.0"
+version = "0.1.1"
 description = "Interactive CLI generator for production-ready FastAPI AI stacks"
 authors = ["Harsh Gautam <hgqeir@gmai.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "fastai_stack" }]
+include = [
+  { path = "templates", format = ["sdist", "wheel"] }
+]
 homepage = "https://github.com/HarshG1308/fastai-stack"
 repository = "https://github.com/HarshG1308/fastai-stack"
 keywords = ["fastapi", "cli", "scaffold", "ai", "ml", "generator"]
