@@ -73,7 +73,6 @@ a {
     linear-gradient(rgba(143, 184, 255, 0.12) 1px, transparent 1px),
     linear-gradient(90deg, rgba(143, 184, 255, 0.12) 1px, transparent 1px);
   background-size: 32px 32px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
 }
 
 .frame:hover {
@@ -81,9 +80,9 @@ a {
 }
 
 .cta-strong {
-  box-shadow: 0 0 0 1px rgba(112, 255, 209, 0.5), 0 10px 35px rgba(112, 255, 209, 0.2);
+  box-shadow: 0 0 0 1px rgba(112, 255, 209, 0.65), 0 12px 35px rgba(112, 255, 209, 0.28);
 }
 
 .cta-warm {
-  box-shadow: 0 0 0 1px rgba(255, 184, 102, 0.45), 0 10px 35px rgba(255, 184, 102, 0.15);
+  box-shadow: 0 0 0 1px rgba(255, 184, 102, 0.6), 0 12px 35px rgba(255, 184, 102, 0.24);
 }

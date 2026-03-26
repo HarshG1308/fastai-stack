@@ -34,13 +34,13 @@ export default function Home() {
               href="https://pypi.org/project/fastai-stack/"
               target="_blank"
               rel="noreferrer"
-              className="code cta-strong rounded-lg border border-cyan-300/55 bg-cyan-300/18 px-6 py-3.5 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/26"
+              className="code cta-strong rounded-lg border border-cyan-300/70 bg-cyan-300/24 px-6 py-3.5 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-300/32"
             >
               Install from PyPI
             </a>
             <Link
               href="/docs"
-              className="code cta-warm rounded-lg border border-amber-300/50 bg-amber-300/12 px-6 py-3.5 text-sm font-semibold text-amber-100 transition hover:bg-amber-300/20"
+              className="code cta-warm rounded-lg border border-amber-300/65 bg-amber-300/18 px-6 py-3.5 text-sm font-semibold text-amber-50 transition hover:bg-amber-300/28"
             >
               Explore Documentation
             </Link>

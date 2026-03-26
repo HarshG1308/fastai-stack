@@ -6,14 +6,12 @@ type HeroTypewriterProps = {
   lines: string[];
   speedMs?: number;
   linePauseMs?: number;
-  loopPauseMs?: number;
 };
 
 export function HeroTypewriter({
   lines,
   speedMs = 34,
   linePauseMs = 480,
-  loopPauseMs = 1600,
 }: HeroTypewriterProps) {
   const [lineIndex, setLineIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
@@ -42,22 +40,20 @@ export function HeroTypewriter({
         setLineIndex((prev) => prev + 1);
         setCharIndex(0);
       }, linePauseMs);
-    } else {
-      timer = setTimeout(() => {
-        setLineIndex(0);
-        setCharIndex(0);
-      }, loopPauseMs);
     }
 
     return () => clearTimeout(timer);
-  }, [charIndex, currentLine.length, lineIndex, linePauseMs, lines, loopPauseMs, speedMs]);
+  }, [charIndex, currentLine.length, lineIndex, linePauseMs, lines, speedMs]);
+
+  const finishedTyping =
+    lines.length > 0 && lineIndex === lines.length - 1 && charIndex >= currentLine.length;
 
   return (
     <h1 className="text-4xl font-semibold leading-[1.05] text-white md:text-7xl">
       {renderedLines.map((line, index) => (
         <span key={`${index}-${line}`} className="block">
           {line}
-          {index === renderedLines.length - 1 ? (
+          {index === renderedLines.length - 1 && !finishedTyping ? (
             <span className="ml-1 inline-block h-8 w-[3px] animate-pulse bg-cyan-200 align-middle md:h-12" />
           ) : null}
         </span>
